@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 800px; margin: 30px auto; padding: 0 20px;">
+    
+    <div style="background: linear-gradient(135deg, #1565C0, #0A1628); color: white; padding: 30px; border-radius: 20px; margin-bottom: 25px;">
+        <h2 style="margin: 0 0 8px 0; font-size: 26px;">📅 Book Your Appointment</h2>
+        <p style="margin: 0; opacity: 0.85; font-size: 14px;">Smart scheduling powered by AI - Real-time availability</p>
+    </div>
+
+    <form method="POST" id="bookingForm">
+        <!-- STEP 1: Department -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Select Department</h3>
+            </div>
+            <select name="department" id="deptSelect" onchange="filterDocs()" 
+                style="width:100%; padding:14px; border-radius:12px; border:2px solid #e2e8f0; font-size: 15px; background: #f8fafc;" required>
+                <option value="">-- Choose Department --</option>
+                <option value="Cardiology">❤️ Cardiology</option>
+                <option value="Neurology">🧠 Neurology</option>
+                <option value="Orthopedics">🦴 Orthopedics</option>
+                <option value="General Medicine">🩺 General Medicine</option>
+                <option value="Pediatrics">👶 Pediatrics</option>
+            </select>
+        </div>
+
+        <!-- STEP 2: Doctor -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Choose Doctor</h3>
+            </div>
+            <select name="doctor_id" id="docSelect" onchange="loadSlots()" 
+                style="width:100%; padding:14px; border-radius:12px; border:2px solid #e2e8f0; font-size: 15px; background: #f8fafc;" required disabled>
+                <option value="">-- Select Department First --</option>
+                {% for doc in doctors %}
+                <option value="{{ doc.id }}" data-dept="{{ doc.specialization }}" style="display:none;">{{ doc.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- STEP 3: Date -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Select Date</h3>
+            </div>
+            <input type="date" name="date" id="dateInput" onchange="loadSlots()" 
+                style="width:100%; padding:14px; border-radius:12px; border:2px solid #e2e8f0; font-size: 15px; background: #f8fafc;" required>
+        </div>
+
+        <!-- STEP 4: Time Slots (RANGES) -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #1565C0; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Pick a Time Slot</h3>
+            </div>
+            
+            <!-- Updated Legend - No more "X booked" -->
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px; background: #f8fafc; border-radius: 10px; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #10b981; border-radius: 3px;"></div> Available</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 3px;"></div> Light</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 3px;"></div> Moderate</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #ef4444; border-radius: 3px;"></div> Busy</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #94a3b8; border-radius: 3px;"></div> Full</div>
+            </div>
+
+            <div id="slotsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; min-height: 100px;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">
+                    👆 Please select a doctor and date to view available slots
+                </div>
+            </div>
+            <input type="hidden" name="hour" id="selectedHour" required>
+        </div>
+
+        <button type="submit" id="submitBtn" disabled
+            style="width:100%; background:linear-gradient(135deg, #1565C0, #0d47a1); color:white; padding:18px; border:none; border-radius:14px; font-weight:bold; cursor:pointer; font-size: 16px; box-shadow: 0 8px 20px rgba(21, 101, 192, 0.3); opacity: 0.5;">
+            🔒 Confirm Booking
+        </button>
+    </form>
+</div>
+
+<!-- CROWD WARNING MODAL -->
+<div id="crowdModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: white; border-radius: 20px; max-width: 480px; width: 100%; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div id="modalIcon" style="text-align: center; font-size: 50px; margin-bottom: 15px;">⚠️</div>
+        <h3 id="modalTitle" style="text-align: center; margin: 0 0 12px 0; color: #0A1628;">Slot Filling Up!</h3>
+        <p id="modalMessage" style="text-align: center; color: #475569; margin-bottom: 25px; line-height: 1.6; font-size: 14px;"></p>
+        <div style="display: flex; gap: 12px;">
+            <button onclick="cancelSlot()" style="flex:1; padding: 13px; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Pick Another</button>
+            <button onclick="confirmSlot()" style="flex:1; padding: 13px; background: #1565C0; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Continue Anyway</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let pendingSlot = null;
+document.getElementById('dateInput').min = new Date().toISOString().split('T')[0];
+
+function filterDocs() {
+    const dept = document.getElementById('deptSelect').value;
+    const docSelect = document.getElementById('docSelect');
+    const options = docSelect.options;
+    docSelect.disabled = !dept;
+    docSelect.value = "";
+    for (let i = 1; i < options.length; i++) {
+        options[i].style.display = options[i].getAttribute('data-dept') === dept ? "block" : "none";
+    }
+    document.getElementById('slotsContainer').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">👆 Please select a doctor and date to view slots</div>';
+    resetSubmit();
+}
+
+async function loadSlots() {
+    const docId = document.getElementById('docSelect').value;
+    const dateVal = document.getElementById('dateInput').value;
+    const container = document.getElementById('slotsContainer');
+    
+    if (!docId || !dateVal) return;
+    
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px;">⏳ Loading available slots...</div>';
+    
+    try {
+        const res = await fetch('/api/get_slots', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({doctor_id: docId, date: dateVal})
+        });
+        const data = await res.json();
+        
+        if (data.slots && data.slots.length > 0) {
+            container.innerHTML = '';
+            data.slots.forEach(slot => {
+                const colors = {
+                    'available': {bg: '#ecfdf5', border: '#10b981', text: '#065f46', badge: 'Available', icon: '✓'},
+                    'low': {bg: '#eff6ff', border: '#3b82f6', text: '#1e40af', badge: 'Light Schedule', icon: '○'},
+                    'medium': {bg: '#fffbeb', border: '#f59e0b', text: '#92400e', badge: 'Moderate', icon: '⏱'},
+                    'high': {bg: '#fef2f2', border: '#ef4444', text: '#991b1b', badge: 'Busy', icon: '⚠'},
+                    'full': {bg: '#f1f5f9', border: '#94a3b8', text: '#475569', badge: 'Full', icon: '✕'}
+                };
+                const c = colors[slot.level];
+                const isFull = slot.level === 'full';
+                
+                const slotBox = document.createElement('div');
+                slotBox.className = 'slot-box';
+                slotBox.style.cssText = `
+                    padding: 18px 14px; border-radius: 14px; text-align: center; cursor: ${isFull ? 'not-allowed' : 'pointer'};
+                    background: ${c.bg}; border: 2px solid ${c.border}; transition: all 0.2s;
+                    opacity: ${isFull ? '0.5' : '1'}; position: relative;
+                `;
+                slotBox.innerHTML = `
+                    <div style="font-weight: bold; font-size: 16px; color: ${c.text}; margin-bottom: 8px;">${slot.label}</div>
+                    <div style="display: inline-block; padding: 4px 10px; border-radius: 20px; background: ${c.border}; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        ${c.icon} ${c.badge}
+                    </div>
+                `;
+                
+                if (!isFull) {
+                    slotBox.onclick = () => selectSlot(slot, slotBox);
+                    slotBox.onmouseenter = () => slotBox.style.transform = 'translateY(-3px)';
+                    slotBox.onmouseleave = () => { if (!slotBox.classList.contains('selected')) slotBox.style.transform = 'translateY(0)'; };
+                }
+                container.appendChild(slotBox);
+            });
+        } else {
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">No slots available</div>';
+        }
+    } catch(e) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #ef4444;">Error loading slots</div>';
+    }
+}
+
+function selectSlot(slot, box) {
+    // Show warning popup for high/medium crowd (no exact count revealed)
+    if (slot.level === 'high') {
+        pendingSlot = {slot, box};
+        document.getElementById('modalIcon').textContent = '⚠️';
+        document.getElementById('modalTitle').textContent = 'Slot Generally Full!';
+        document.getElementById('modalMessage').innerHTML = 
+            `<strong>${slot.label}</strong> is currently very busy.<br><br>` +
+            `You may experience <strong style="color:#ef4444;">a waiting delay of 20-30 minutes</strong>.<br><br>` +
+            `We recommend choosing a different time slot for a smoother experience.`;
+        document.getElementById('crowdModal').style.display = 'flex';
+    } else if (slot.level === 'medium') {
+        pendingSlot = {slot, box};
+        document.getElementById('modalIcon').textContent = '🟡';
+        document.getElementById('modalTitle').textContent = 'Moderate Booking';
+        document.getElementById('modalMessage').innerHTML = 
+            `<strong>${slot.label}</strong> has moderate bookings.<br><br>` +
+            `You may face a <strong>slight delay of around 10 minutes</strong>.<br><br>` +
+            `Would you like to continue with this slot?`;
+        document.getElementById('crowdModal').style.display = 'flex';
+    } else {
+        applySelection(slot, box);
+    }
+}
+
+function confirmSlot() {
+    if (pendingSlot) {
+        applySelection(pendingSlot.slot, pendingSlot.box);
+        document.getElementById('crowdModal').style.display = 'none';
+    }
+}
+
+function cancelSlot() {
+    document.getElementById('crowdModal').style.display = 'none';
+    pendingSlot = null;
+}
+
+function applySelection(slot, box) {
+    document.querySelectorAll('.slot-box').forEach(b => {
+        b.classList.remove('selected');
+        b.style.transform = 'translateY(0)';
+        b.style.boxShadow = 'none';
+    });
+    box.classList.add('selected');
+    box.style.transform = 'translateY(-3px)';
+    box.style.boxShadow = '0 8px 20px rgba(21, 101, 192, 0.3)';
+    document.getElementById('selectedHour').value = slot.hour;
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.innerHTML = `✅ Confirm Booking for ${slot.label}`;
+}
+
+function resetSubmit() {
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.innerHTML = '🔒 Confirm Booking';
+    document.getElementById('selectedHour').value = '';
+}
+</script>
+{% endblock %}

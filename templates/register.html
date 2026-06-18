@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration - City Hospital</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+        }
+
+        .auth-wrapper {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .auth-sidebar {
+            flex: 1;
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-accent {
+            width: 45px;
+            height: 4px;
+            background-color: #3b82f6;
+            margin-bottom: 25px;
+            border-radius: 2px;
+        }
+
+        .auth-sidebar h1 { font-size: 2.8rem; margin: 0 0 10px 0; font-weight: 700; }
+        .auth-sidebar h2 { font-size: 1.2rem; color: #94a3b8; font-weight: 400; margin: 0 0 60px 0; }
+
+        .feature-row { display: flex; gap: 20px; margin-bottom: 40px; align-items: flex-start; }
+        .icon-box { 
+            width: 48px; height: 48px; background: rgba(255,255,255,0.05); 
+            border-radius: 12px; display: flex; align-items: center; 
+            justify-content: center; font-size: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .feature-text strong { display: block; font-size: 1.1rem; margin-bottom: 6px; color: #fff; }
+        .feature-text p { font-size: 0.9rem; color: #94a3b8; margin: 0; line-height: 1.6; }
+
+        .auth-content {
+            flex: 1.3;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .form-container h3 { font-size: 2.2rem; color: #1e293b; margin: 0 0 10px 0; font-weight: 700; }
+        .form-container .subtitle { color: #64748b; margin-bottom: 40px; font-size: 1rem; }
+
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .col-span-2 { grid-column: span 2; }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        input, select {
+            padding: 15px 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Phone input with country code */
+        .phone-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+        .phone-wrapper .country-code {
+            width: 80px;
+            text-align: center;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .phone-wrapper input[type="tel"] {
+            flex: 1;
+        }
+
+        .sms-info {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #1e40af;
+            margin-top: 6px;
+        }
+
+        .loc-btn {
+            background: #f1f5f9;
+            border: 1px dashed #3b82f6;
+            color: #3b82f6;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+        .loc-btn:hover { background: #eef2ff; }
+
+        .register-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 35px;
+            width: 100%;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
+        }
+        .register-btn:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.4); }
+
+        .form-footer { text-align: center; margin-top: 35px; font-size: 0.95rem; color: #64748b; }
+        .form-footer a { color: #3b82f6; text-decoration: none; font-weight: 700; }
+
+        @media (max-width: 1100px) {
+            .auth-sidebar { display: none; }
+            .auth-content { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-wrapper">
+        <div class="auth-sidebar">
+            <div class="brand-accent"></div>
+            <h1>City Hospital</h1>
+            <h2>Smart Healthcare Portal</h2>
+            
+            <div class="feature-row">
+                <div class="icon-box">⌛</div>
+                <div class="feature-text">
+                    <strong>Smart Wait-Time</strong>
+                    <p>Dynamic scheduling that respects your time and reduces hospital crowding.</p>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="icon-box">📱</div>
+                <div class="feature-text">
+                    <strong>SMS Notifications</strong>
+                    <p>Get instant alerts for appointment confirmations, reminders, and updates on your phone.</p>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="icon-box">🛡️</div>
+                <div class="feature-text">
+                    <strong>Secure Records</strong>
+                    <p>Your medical data is protected with industry-standard encryption protocols.</p>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="icon-box">🩺</div>
+                <div class="feature-text">
+                    <strong>Specialized Care</strong>
+                    <p>Instant access to top departments and specialized medical practitioners.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-content">
+            <div class="form-container">
+                <h3>Patient Registration</h3>
+                <p class="subtitle">Join HOAMS for a faster, smarter OPD experience.</p>
+                
+                <form action="{{ url_for('register') }}" method="POST">
+                    <div class="input-grid">
+                        <div class="input-group col-span-2">
+                            <label>Full Name</label>
+                            <input type="text" name="name" placeholder="John Doe" required>
+                        </div>
+
+                        <div class="input-group col-span-2">
+    <label>Email Address (.com only)</label>
+    <input type="email" name="email" id="emailInput" placeholder="john@example.com" 
+           pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.com$"
+           title="Only .com email addresses are allowed (e.g. user@gmail.com)" required>
+    <small style="color:#64748b; font-size:11px; margin-top:4px;">⚠️ Only .com domain emails accepted (gmail.com, yahoo.com, outlook.com, etc.)</small>
+</div>
+
+
+                        <div class="input-group col-span-2">
+                            <label>📱 Mobile Number</label>
+                            <div class="phone-wrapper">
+                                <input type="text" class="country-code" value="+91" readonly>
+                                <input type="tel" name="phone" placeholder="9876543210" 
+                                       pattern="[0-9]{10}" maxlength="10" 
+                                       title="Enter a valid 10-digit mobile number" required>
+                            </div>
+                            
+                        </div>
+
+                        <div class="input-group col-span-2">
+                            <label>Password</label>
+                            <input type="password" name="password" placeholder="Create a secure password" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Age</label>
+                            <input type="number" name="age" value="25" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Gender</label>
+                            <select name="gender">
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group col-span-2">
+                            <label>Hospital Proximity (KM)</label>
+                            <input type="number" step="0.01" name="distance_km" id="distance_km" placeholder="0.00" required>
+                            <button type="button" class="loc-btn" onclick="getLocation()">📍 Sync My Location</button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="register-btn">Create Secure Account</button>
+                </form>
+
+                <div class="form-footer">
+                    Already have an account? <a href="{{ url_for('login') }}">Sign in to HOAMS</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Allow only numbers in phone input
+        document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        function getLocation() {
+            const distInput = document.getElementById('distance_km');
+            const btn = document.querySelector('.loc-btn');
+            if (navigator.geolocation) {
+                btn.innerText = "⌛ Calculating Distance...";
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat1 = position.coords.latitude;
+                    const lon1 = position.coords.longitude;
+                    const lat2 = 28.4506;
+                    const lon2 = 77.5148;
+
+                    const R = 6371; 
+                    const dLat = (lat2 - lat1) * Math.PI / 180;
+                    const dLon = (lon2 - lon1) * Math.PI / 180;
+                    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    distInput.value = (R * c).toFixed(2);
+                    btn.innerHTML = "✅ Distance Synced";
+                    btn.style.color = "#059669";
+                    btn.style.borderColor = "#059669";
+                    btn.style.background = "#f0fdf4";
+                }, () => { 
+                    alert("Location access required for smart scheduling."); 
+                    btn.innerText = "📍 Sync My Location"; 
+                });
+            }
+        }
+        document.getElementById('emailInput').addEventListener('blur', function() {
+    const val = this.value.trim().toLowerCase();
+    if (val && !val.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/)) {
+        this.style.borderColor = '#ef4444';
+        this.style.background = '#fef2f2';
+        alert('⚠️ Only .com email addresses are allowed.\nExamples: user@gmail.com, user@yahoo.com, user@outlook.com');
+    } else {
+        this.style.borderColor = '#e2e8f0';
+        this.style.background = '#f8fafc';
+    }
+});
+
+    </script>
+</body>
+</html>

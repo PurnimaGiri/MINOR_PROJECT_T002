@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 800px; margin: 30px auto; padding: 0 20px;">
+    
+    <div style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; border-radius: 20px; margin-bottom: 25px;">
+        <h2 style="margin: 0 0 8px 0; font-size: 26px;">🔄 Reschedule Appointment</h2>
+        <p style="margin: 0; opacity: 0.9; font-size: 14px;">Pick a new date and time that works better for you</p>
+    </div>
+
+    <!-- Current Appointment Info -->
+    <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 4px solid #ef4444;">
+        <h3 style="margin: 0 0 15px 0; color: #0A1628; font-size: 16px;">📋 Current Appointment</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+            <div>
+                <p style="margin: 0; font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Department</p>
+                <p style="margin: 4px 0 0 0; font-weight: 600; color: #1e293b;">{{ appt.dept }}</p>
+            </div>
+            <div>
+                <p style="margin: 0; font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Doctor</p>
+                <p style="margin: 4px 0 0 0; font-weight: 600; color: #1e293b;">Dr. {{ appt.doc_name or 'Staff' }}</p>
+            </div>
+            <div>
+                <p style="margin: 0; font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Date</p>
+                <p style="margin: 4px 0 0 0; font-weight: 600; color: #1e293b;">{{ appt.appointment_date }}</p>
+            </div>
+            <div>
+                <p style="margin: 0; font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Time</p>
+                <p style="margin: 4px 0 0 0; font-weight: 600; color: #1e293b;">{{ appt.appointment_hour }}:00</p>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" id="rescheduleForm">
+        <!-- STEP 1: New Date -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #f59e0b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Select New Date</h3>
+            </div>
+            <input type="date" id="dateInput" onchange="loadSlots()" 
+                style="width:100%; padding:14px; border-radius:12px; border:2px solid #e2e8f0; font-size: 15px; background: #f8fafc;" required>
+        </div>
+
+        <!-- STEP 2: New Time Slot -->
+        <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                <div style="width: 32px; height: 32px; background: #f59e0b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                <h3 style="margin: 0; font-size: 17px; color: #0A1628;">Pick New Time Slot</h3>
+            </div>
+            
+            <!-- Legend -->
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 18px; padding: 12px; background: #f8fafc; border-radius: 10px; font-size: 12px;">
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #10b981; border-radius: 3px;"></div> Available</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 3px;"></div> Low Crowd</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 3px;"></div> Medium</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #ef4444; border-radius: 3px;"></div> High Crowd</div>
+                <div style="display: flex; align-items: center; gap: 5px;"><div style="width: 12px; height: 12px; background: #94a3b8; border-radius: 3px;"></div> Full</div>
+            </div>
+
+            <div id="slotsContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; min-height: 100px;">
+                <div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">
+                    👆 Please select a date to view available slots
+                </div>
+            </div>
+            <input type="hidden" name="new_hour" id="selectedHour" required>
+            <input type="hidden" name="new_date" id="newDateHidden" required>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ url_for('patient_dashboard') }}" 
+                style="flex:1; text-align: center; background: #f1f5f9; color: #475569; padding: 16px; border-radius: 14px; text-decoration: none; font-weight: 600;">
+                Cancel
+            </a>
+            <button type="submit" id="submitBtn" disabled
+                style="flex:2; background:linear-gradient(135deg, #f59e0b, #d97706); color:white; padding:16px; border:none; border-radius:14px; font-weight:bold; cursor:pointer; font-size: 15px; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); opacity: 0.5;">
+                🔒 Confirm Reschedule
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- CROWD WARNING MODAL -->
+<div id="crowdModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: white; border-radius: 20px; max-width: 450px; width: 100%; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div id="modalIcon" style="text-align: center; font-size: 50px; margin-bottom: 15px;">⚠️</div>
+        <h3 id="modalTitle" style="text-align: center; margin: 0 0 12px 0; color: #0A1628;">High Crowd Alert</h3>
+        <p id="modalMessage" style="text-align: center; color: #475569; margin-bottom: 25px; line-height: 1.6;"></p>
+        <div style="display: flex; gap: 12px;">
+            <button onclick="cancelSlot()" style="flex:1; padding: 13px; background: #f1f5f9; color: #475569; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Pick Another</button>
+            <button onclick="confirmSlot()" style="flex:1; padding: 13px; background: #f59e0b; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600;">Continue Anyway</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let pendingSlot = null;
+const DOCTOR_ID = {{ appt.doctor_id }};
+
+// Set min date to today
+document.getElementById('dateInput').min = new Date().toISOString().split('T')[0];
+
+async function loadSlots() {
+    const dateVal = document.getElementById('dateInput').value;
+    const container = document.getElementById('slotsContainer');
+    document.getElementById('newDateHidden').value = dateVal;
+    
+    if (!dateVal) return;
+    
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px;">⏳ Loading slots...</div>';
+    
+    try {
+        const res = await fetch('/api/get_slots', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({doctor_id: DOCTOR_ID, date: dateVal})
+        });
+        const data = await res.json();
+        
+        if (data.slots && data.slots.length > 0) {
+            container.innerHTML = '';
+            data.slots.forEach(slot => {
+                const colors = {
+                    'available': {bg: '#ecfdf5', border: '#10b981', text: '#065f46'},
+                    'low': {bg: '#eff6ff', border: '#3b82f6', text: '#1e40af'},
+                    'medium': {bg: '#fffbeb', border: '#f59e0b', text: '#92400e'},
+                    'high': {bg: '#fef2f2', border: '#ef4444', text: '#991b1b'},
+                    'full': {bg: '#f1f5f9', border: '#94a3b8', text: '#475569'}
+                };
+                const c = colors[slot.level];
+                const isFull = slot.level === 'full';
+                
+                const slotBox = document.createElement('div');
+                slotBox.className = 'slot-box';
+                slotBox.style.cssText = `
+                    padding: 16px 12px; border-radius: 12px; text-align: center; cursor: ${isFull ? 'not-allowed' : 'pointer'};
+                    background: ${c.bg}; border: 2px solid ${c.border}; transition: all 0.2s;
+                    opacity: ${isFull ? '0.5' : '1'};
+                `;
+                slotBox.innerHTML = `
+                    <div style="font-weight: bold; font-size: 15px; color: ${c.text};">${slot.label}</div>
+                    <div style="font-size: 10px; margin-top: 5px; color: ${c.text}; text-transform: uppercase; font-weight: 600;">
+                        ${slot.level === 'available' ? '✓ Free' : slot.level === 'full' ? 'Full' : slot.count + ' booked'}
+                    </div>
+                `;
+                
+                if (!isFull) {
+                    slotBox.onclick = () => selectSlot(slot, slotBox);
+                    slotBox.onmouseenter = () => slotBox.style.transform = 'translateY(-3px)';
+                    slotBox.onmouseleave = () => { if (!slotBox.classList.contains('selected')) slotBox.style.transform = 'translateY(0)'; };
+                }
+                container.appendChild(slotBox);
+            });
+        } else {
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #94a3b8;">No slots available</div>';
+        }
+    } catch(e) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 30px; color: #ef4444;">Error loading slots</div>';
+    }
+}
+
+function selectSlot(slot, box) {
+    if (slot.level === 'high') {
+        pendingSlot = {slot, box};
+        document.getElementById('modalIcon').textContent = '⚠️';
+        document.getElementById('modalTitle').textContent = 'High Crowd Alert!';
+        document.getElementById('modalMessage').innerHTML = 
+            `<strong>${slot.label}</strong> has <strong style="color:#ef4444;">${slot.count} patients</strong> already booked.<br><br>` +
+            `${slot.message}.<br><br>Would you like to choose a less crowded slot?`;
+        document.getElementById('crowdModal').style.display = 'flex';
+    } else if (slot.level === 'medium') {
+        pendingSlot = {slot, box};
+        document.getElementById('modalIcon').textContent = '🟡';
+        document.getElementById('modalTitle').textContent = 'Moderate Crowd';
+        document.getElementById('modalMessage').innerHTML = 
+            `<strong>${slot.label}</strong> currently has <strong>${slot.count} patients</strong> booked.<br><br>${slot.message}`;
+        document.getElementById('crowdModal').style.display = 'flex';
+    } else {
+        applySelection(slot, box);
+    }
+}
+
+function confirmSlot() {
+    if (pendingSlot) {
+        applySelection(pendingSlot.slot, pendingSlot.box);
+        document.getElementById('crowdModal').style.display = 'none';
+    }
+}
+
+function cancelSlot() {
+    document.getElementById('crowdModal').style.display = 'none';
+    pendingSlot = null;
+}
+
+function applySelection(slot, box) {
+    document.querySelectorAll('.slot-box').forEach(b => {
+        b.classList.remove('selected');
+        b.style.transform = 'translateY(0)';
+        b.style.boxShadow = 'none';
+    });
+    box.classList.add('selected');
+    box.style.transform = 'translateY(-3px)';
+    box.style.boxShadow = '0 8px 20px rgba(245, 158, 11, 0.3)';
+    document.getElementById('selectedHour').value = slot.hour;
+    
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.innerHTML = `✅ Confirm Reschedule to ${slot.label}`;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="padding: 30px; background: #f4f7fe; min-height: 100vh;">
+    
+    <div style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; padding: 30px; border-radius: 20px; margin-bottom: 25px;">
+        <h2 style="margin: 0 0 8px 0; font-size: 26px;">🏥 Our Departments</h2>
+        <p style="margin: 0; opacity: 0.9;">Explore specialized care from our expert medical team</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px;">
+        {% for dept_name, data in departments.items() %}
+        <div style="background: white; border-radius: 18px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: 0.3s; border-top: 4px solid {{ data.info.color }};"
+            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 30px rgba(0,0,0,0.1)'" 
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.05)'">
+            
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+                <div style="width: 56px; height: 56px; background: {{ data.info.color }}22; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                    {{ data.info.icon }}
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: #0A1628; font-size: 18px;">{{ dept_name }}</h3>
+                    <p style="margin: 3px 0 0 0; color: #64748b; font-size: 12px;">{{ data.info.desc }}</p>
+                </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 14px; border-radius: 12px; margin-bottom: 15px;">
+                <p style="margin: 0 0 10px 0; font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Available Doctors ({{ data.doctors|length }})</p>
+                {% for doc in data.doctors[:3] %}
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; {% if not loop.last %}border-bottom: 1px solid #e2e8f0;{% endif %}">
+                    <div style="width: 32px; height: 32px; background: {{ data.info.color }}; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px;">
+                        {{ doc.name[0] }}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #1e293b;">{{ doc.name }}</p>
+                        <small style="color: #94a3b8;">⭐ 4.{{ loop.index + 5 }} • {{ 5 + loop.index * 2 }} yrs exp</small>
+                    </div>
+                </div>
+                {% endfor %}
+                {% if data.doctors|length > 3 %}
+                <p style="margin: 8px 0 0 0; font-size: 11px; color: {{ data.info.color }}; font-weight: 600; text-align: center;">+{{ data.doctors|length - 3 }} more doctors</p>
+                {% endif %}
+            </div>
+
+            <a href="{{ url_for('book_appointment') }}" 
+                style="display: block; text-align: center; background: {{ data.info.color }}; color: white; padding: 11px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; transition: 0.2s;">
+                Book Appointment →
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Why Choose Us -->
+    <div style="background: white; padding: 30px; border-radius: 18px; margin-top: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+        <h3 style="margin: 0 0 20px 0; color: #0A1628;">✨ Why Choose City Hospital?</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
+            <div style="text-align: center; padding: 18px;">
+                <div style="font-size: 36px; margin-bottom: 10px;">🏆</div>
+                <h4 style="margin: 0 0 5px 0; color: #1e293b;">Expert Team</h4>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">15+ specialists across departments</p>
+            </div>
+            <div style="text-align: center; padding: 18px;">
+                <div style="font-size: 36px; margin-bottom: 10px;">🤖</div>
+                <h4 style="margin: 0 0 5px 0; color: #1e293b;">AI-Powered</h4>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Smart scheduling with ML</p>
+            </div>
+            <div style="text-align: center; padding: 18px;">
+                <div style="font-size: 36px; margin-bottom: 10px;">⏰</div>
+                <h4 style="margin: 0 0 5px 0; color: #1e293b;">24/7 Service</h4>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Round-the-clock emergency care</p>
+            </div>
+            <div style="text-align: center; padding: 18px;">
+                <div style="font-size: 36px; margin-bottom: 10px;">🛡️</div>
+                <h4 style="margin: 0 0 5px 0; color: #1e293b;">Secure</h4>
+                <p style="margin: 0; color: #64748b; font-size: 13px;">Encrypted medical records</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

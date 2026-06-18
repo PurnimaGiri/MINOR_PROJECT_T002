@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Reschedule — HOAMS{% endblock %}
+{% block page_title %}Reschedule Appointment{% endblock %}
+{% block page_sub %}City Hospital OPD — Change your booking{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;margin:0 auto">
+  <div class="card card-body">
+    <div class="section-title">Current Appointment</div>
+    <div class="section-sub">{{ appt.department_name }} — {{ appt.doctor_name }}</div>
+
+    <div style="background:var(--bg);border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:13px">
+      <div><strong>Date:</strong> {{ appt.appointment_date }} at {{ "%02d:00"|format(appt.appointment_hour) }}</div>
+      <div style="margin-top:6px"><strong>Slot:</strong> {{ appt.slot_label }} ({{ appt.slot_range }})</div>
+      <div style="margin-top: 5px; font-size: 12px;">
+    Risk: <span style="color: {{ appt.noshow_color }}; font-weight: bold;">{{ appt.noshow_risk }}</span>
+</div>
+
+    <div class="divider"></div>
+    <div class="section-title">New Schedule</div>
+    <div class="section-sub">Select a new date and time</div>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>New Date</label>
+        <input type="date" name="new_date" min="{{ min_date }}" max="{{ max_date }}" required>
+      </div>
+      <div class="form-group">
+        <label>New Time</label>
+        <select name="new_hour">
+          <option value="8">8:00 AM</option>
+          <option value="9" selected>9:00 AM</option>
+          <option value="10">10:00 AM</option>
+          <option value="11">11:00 AM</option>
+          <option value="12">12:00 PM</option>
+          <option value="13">1:00 PM</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px">
+        <button type="submit" class="btn btn-primary" style="flex:1">Save Changes</button>
+        <a href="/dashboard" class="btn btn-ghost" style="flex:1;text-align:center">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

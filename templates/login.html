@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — City Hospital HOAMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0A1628;--blue:#1565C0;--sky:#1E88E5;--bg:#F1F5F9;--border:#E2E8F0;--muted:#64748B;--red:#DC2626;--green:#059669}
+body{font-family:'Sora',sans-serif;background:var(--bg);min-height:100vh;display:flex}
+.left-panel{
+  width:420px;min-width:420px;background:var(--navy);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:60px 48px;position:relative;overflow:hidden;
+}
+.left-panel::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:300px;height:300px;border-radius:50%;
+  background:rgba(30,136,229,.15);pointer-events:none;
+}
+.left-panel::after{
+  content:'';position:absolute;bottom:-60px;left:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:rgba(0,172,193,.1);pointer-events:none;
+}
+.panel-logo{font-size:40px;margin-bottom:24px}
+.panel-title{color:#fff;font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.2;margin-bottom:12px}
+.panel-sub{color:rgba(255,255,255,.5);font-size:14px;line-height:1.6;margin-bottom:40px}
+.panel-feature{display:flex;align-items:center;gap:12px;margin-bottom:16px;color:rgba(255,255,255,.7);font-size:13px}
+.feat-icon{width:32px;height:32px;background:rgba(255,255,255,.1);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+
+.right-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+.login-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(10,22,40,.1);padding:44px;width:100%;max-width:420px}
+.card-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.logo-box{width:44px;height:44px;background:var(--sky);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.card-logo h2{font-size:18px;font-weight:700;color:var(--navy)}
+.card-logo p{font-size:12px;color:var(--muted)}
+h3{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:-.02em}
+.sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.form-group{margin-bottom:18px}
+label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:14px;color:var(--navy);outline:none;transition:.15s}
+input:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(30,136,229,.12)}
+.btn-login{
+  width:100%;padding:13px;background:var(--sky);color:#fff;border:none;
+  border-radius:11px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;
+  cursor:pointer;margin-top:6px;transition:.15s;letter-spacing:-.01em;
+}
+.btn-login:hover{background:var(--blue);transform:translateY(-1px);box-shadow:0 4px 16px rgba(30,136,229,.35)}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.link-row{text-align:center;font-size:13px;color:var(--muted)}
+.link-row a{color:var(--sky);font-weight:600}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.demo-card{background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:.15s}
+.demo-card:hover{border-color:var(--sky);background:#EFF6FF}
+.demo-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-bottom:4px}
+.demo-val{font-size:12px;font-weight:500;color:var(--navy)}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.alert-error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+.alert-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+</style>
+</head>
+<body>
+<div class="left-panel">
+  <div class="panel-logo">🏥</div>
+  <h1 class="panel-title">City Hospital<br>Greater Noida</h1>
+  <p class="panel-sub">Smart OPD Appointment Management powered by Random Forest Machine Learning</p>
+  <div class="panel-feature"><div class="feat-icon">🤖</div> AI-based Technologies used</div>
+  <div class="panel-feature"><div class="feat-icon">📊</div> Caring for our community, one checkup at a time</div>
+  <div class="panel-feature"><div class="feat-icon">⚡</div> Advanced Medicine, Trusted Care</div>
+  <div class="panel-feature"><div class="feat-icon">🔔</div> Schedule your appointment today and take the first step toward a healthier life</div>
+</div>
+
+<div class="right-panel">
+  <div class="login-card">
+    <div class="card-logo">
+      <div class="logo-box">🏥</div>
+      <div>
+        <h2>City Hospital</h2>
+        <p>We care for your future.</p>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }}">
+        {% if cat == 'success' %}✅{% else %}❌{% endif %} {{ msg }}
+      </div>
+      {% endfor %}
+    {% endwith %}
+
+    <h3>Welcome back</h3>
+    <p class="sub">Sign in to your account</p>
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-login">Sign In →</button>
+    </form>
+
+
+    <div class="link-row" style="margin-top:20px">
+      New patient? <a href="{{ url_for('register') }}">Create Account</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fillDemo(email, pwd) {
+  document.querySelector('input[name="email"]').value = email;
+  document.querySelector('input[name="password"]').value = pwd;
+}
+</script>
+</body>
+</html>

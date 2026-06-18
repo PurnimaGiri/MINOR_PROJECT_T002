@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="padding: 30px; background: #f4f7fe; min-height: 100vh;">
+    
+    <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px; border-radius: 20px; margin-bottom: 25px;">
+        <h2 style="margin: 0 0 8px 0; font-size: 26px;">📋 My Health Reports</h2>
+        <p style="margin: 0; opacity: 0.9;">Access all your medical reports and consultation summaries in one place</p>
+    </div>
+
+    <!-- Filter -->
+    <div style="background: white; padding: 18px; border-radius: 14px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="filter-btn active" onclick="filterReports('all', this)" 
+            style="padding: 8px 18px; background: #1565C0; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">All Reports</button>
+        <button class="filter-btn" onclick="filterReports('Lab Report', this)" 
+            style="padding: 8px 18px; background: #f1f5f9; color: #475569; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">🧪 Lab</button>
+        <button class="filter-btn" onclick="filterReports('Radiology', this)" 
+            style="padding: 8px 18px; background: #f1f5f9; color: #475569; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">📷 Radiology</button>
+        <button class="filter-btn" onclick="filterReports('Consultation Summary', this)" 
+            style="padding: 8px 18px; background: #f1f5f9; color: #475569; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;">🩺 Consultation</button>
+    </div>
+
+    <!-- Reports Grid -->
+    <div id="reportsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        {% if reports %}
+            {% for r in reports %}
+            <div class="report-card" data-type="{{ r.type }}" 
+                style="background: white; border-radius: 16px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); transition: 0.3s; border: 1px solid #f1f5f9;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div style="background:
+    {{ '#dbeafe' if r.type == 'Lab Report'
+    else '#fce7f3' if r.type == 'Radiology'
+    else '#fee2e2' if r.type == 'Cardiology'
+    else '#dcfce7' }};
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;">
+
+    {% if r.type == 'Lab Report' %}🧪
+    {% elif r.type == 'Radiology' %}📷
+    {% elif r.type == 'Cardiology' %}❤️
+    {% else %}🩺
+    {% endif %}
+</div>
+                    <span style="background: #ecfdf5; color: #059669; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">{{ r.status }}</span>
+                </div>
+                <h4 style="margin: 0 0 6px 0; color: #0A1628; font-size: 15px;">{{ r.title }}</h4>
+                <p style="margin: 0; color: #64748b; font-size: 12px;">By {{ r.doctor }}</p>
+                <div style="border-top: 1px solid #f1f5f9; margin-top: 15px; padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <small style="color: #94a3b8;">📅 {{ r.date }}</small>
+                    <button onclick="viewReport('{{ r.id }}')" 
+                        style="background: #1565C0; color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                        View →
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: white; border-radius: 16px;">
+                <div style="font-size: 50px; margin-bottom: 15px;">📂</div>
+                <h3 style="color: #475569;">No Reports Yet</h3>
+                <p style="color: #94a3b8;">Your medical reports will appear here after consultations</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function filterReports(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+        b.style.background = '#f1f5f9';
+        b.style.color = '#475569';
+    });
+    btn.style.background = '#1565C0';
+    btn.style.color = 'white';
+    
+    document.querySelectorAll('.report-card').forEach(card => {
+        if (type === 'all' || card.getAttribute('data-type') === type) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function viewReport(id) {
+    alert('📋 Report #' + id + '\n\nThis would open the full report PDF.\n\n(Demo: Connect to your file storage to enable downloads)');
+}
+</script>
+{% endblock %}
