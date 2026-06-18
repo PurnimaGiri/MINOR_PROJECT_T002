@@ -1,0 +1,8 @@
+=== NO-SHOW MODEL COMPARISON ===
+
+               Model Accuracy Precision Recall AUC-ROC
+ Logistic Regression    49.5%      0.36   0.53    0.51
+         Naive Bayes    42.4%      0.35   0.75    0.49
+       Decision Tree    53.5%      0.35   0.36    0.50
+                 SVM    40.0%      0.36   0.88    0.53
+Random Forest (Ours)    54.5%      0.33   0.27    0.50

@@ -1,0 +1,13 @@
+=== SLOT DURATION CLASSIFICATION REPORT ===
+
+                   precision    recall  f1-score   support
+
+  Short (0-10min)       0.88      0.79      0.83       464
+Medium (10-20min)       0.84      0.93      0.89      1144
+    Long (20+min)       0.92      0.75      0.83       392
+
+         accuracy                           0.86      2000
+        macro avg       0.88      0.82      0.85      2000
+     weighted avg       0.87      0.86      0.86      2000
+
+Overall Accuracy: 86.35%
